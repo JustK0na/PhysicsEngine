@@ -41,15 +41,10 @@ std::vector<float> Controller::acceleration(Object *o)
 
 void Controller::solver(Object *o, float dt)
 {
-
-    if(constrain(o))
-        return;
-
-
     // calculate velocity
     float velocityx, velocityy;
     velocityx = 0.995 *( o->getPosition()[0]-o->getOldPosition()[0]);
-    velocityy = 0.995*(o->getPosition()[1]-o->getOldPosition()[1]);
+    velocityy = 0.995 *( o->getPosition()[1]-o->getOldPosition()[1]);
     //set old position to curren posiotion
 
     o->updateOldPosition(o->getPosition());
@@ -67,18 +62,19 @@ void Controller::solver(Object *o, float dt)
     newPosition.push_back(newPositiony);
     o->updatePosition(newPosition);
 
-
-    //Zachowują się dziwnie bo obiekty nie zwalniają lecąc do góry
 }
 void Controller::update()
 {
     for(unsigned int i =0; i<o.size(); i++)
     {
-        solver(o[i],1);
+        solver(o[i],1);           //Calculate position
+
+        constrainEdges(o[i]);       //Check constrains
         std::cout<<"\nVx: "<<o[i]->getPosition()[0]-o[i]->getOldPosition()[0]<<"\t Oldx: "<<o[i]->getOldPosition()[0]<<"    Curx: "<<o[i]->getPosition()[0];
     }
+    checkCollision();             //Check collision
 }
-int Controller::constrain(Object *o)
+int Controller::constrainEdges(Object *o)
 {
 
         if(o->getPosition()[1]+30>720)  //screen height
@@ -127,6 +123,33 @@ int Controller::constrain(Object *o)
         }
     return  0;
 }
+
+void Controller::resolveCollision()
+{
+
+}
+int Controller::checkCollision()
+{
+    for(int i=0; i<o.size(); i++)
+    {
+        for(int j=0; j<o.size(); j++) {
+            if(i!=j){
+                //Policz dlugosc wektora pomiedzy srodkami kol
+                float distance = sqrt(pow((o[i]->getPosition()[0] - o[j]->getPosition()[0]), 2) + pow((o[i]->getPosition()[1] - o[j]->getPosition()[1]), 2));
+                 //porownaj z dlugoscia promieni
+                float radiusTotal = o[i]->info()[0] + o[j]->info()[0];
+
+                 //jesli dlugosc wektora mniejsza/rowna sumie dlugosci promieni oblicz kolizje
+                 if (distance <= radiusTotal) {
+                     resolveCollision(o[i],o[j]);
+                    std::cout << "COLLISION!!!\n";
+                }
+            }
+        }
+    }
+    return 0;
+}
+
 void Controller::control(sf::RenderWindow &win)
 {
     sf::Event event;

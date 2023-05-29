@@ -37,7 +37,7 @@ std::vector<float> Object::getForces() const
     return forces;
 }
 
-float Object::getMass()
+float Object::getMass() const
 {
     return  mass;
 }
@@ -63,7 +63,11 @@ void Object::updateOldPosition(std::vector<float> newPosition) {
     oldPosition=newPosition;
 }
 void Object::draw(sf::RenderWindow&) const {}
-
+std::vector<float> Object::info() const {
+    std::vector<float> i_nfo;
+    i_nfo.push_back(0);
+    return i_nfo;
+}
 
 
 
@@ -72,9 +76,11 @@ void Object::draw(sf::RenderWindow&) const {}
 Circle::Circle():radius(SIZE)
 {
 }
-float Circle::getRadius() const
+std::vector<float>  Circle::info() const
 {
-    return radius;
+    std::vector<float> info;
+    info.push_back(radius);
+    return info;
 }
 void Circle::draw(sf::RenderWindow & win) const
 {

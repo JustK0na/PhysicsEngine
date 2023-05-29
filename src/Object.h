@@ -27,10 +27,15 @@ public:
     std::vector<float> getOldPosition() const ;
     std::vector<float> getPosition() const ;
     std::vector<float> getForces() const ;
+    float getMass() const;
+    virtual std::vector<float> info()  const;
+
     virtual void draw(sf::RenderWindow&) const;
-    float getMass();
+
+
     void updatePosition(std::vector<float>);
     void updateOldPosition(std::vector<float>);
+
     int spawn(int x, int y);
 
 
@@ -41,7 +46,7 @@ class Circle: public Object
 public:
     Circle();
     void draw(sf::RenderWindow &) const;
-    float getRadius() const;
+    std::vector<float> info() const;
 };
 
 #endif //PHYSICENGINE_OBJECT_H

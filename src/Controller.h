@@ -10,6 +10,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include "iostream"
+#include <math.h>
 
 #include "vector"
 #include "Object.h"
@@ -23,7 +24,11 @@ public:
     void control(sf::RenderWindow &);  
     void addObject(sf::Event &);
     void update();
-    int constrain(Object *o);
+
+    int constrainEdges(Object *o);
+    int checkCollision();
+    void resolveCollision(Object*,Object*);
+
     void solver(Object*, float);
     std::vector<float> acceleration(Object *);
 
