@@ -5,6 +5,7 @@
 #include "vector"
 #include <time.h>
 #include <stdlib.h>
+
 #define FRAMERATE 60
 
 
@@ -15,9 +16,9 @@ int main() {
 
     std::vector<Object*> objects;
     Controller controller(objects);
-    View view(objects);
+    View view(objects, controller);
 
-    sf::RenderWindow win(sf::VideoMode(1080,720), "Engine");
+    sf::RenderWindow win(sf::VideoMode(SCREENWIDTH,SCREENHEIGHT), "Engine");
     win.setFramerateLimit(FRAMERATE);
 
     while(win.isOpen())

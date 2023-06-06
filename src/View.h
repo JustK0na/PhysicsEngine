@@ -9,16 +9,24 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include "Object.h"
+#include "Controller.h"
 #include "vector"
 #include "iostream"
 #include "typeinfo"
 
 class View {
     std::vector<Object*>& o;
-public:
-    View(std::vector<Object*>&);
-    void present(sf::RenderWindow&) const;
+    Controller &c;
+    sf::Font Oxproto, retrogastroll, openingHours;
+
+
     void drawObjects(sf::RenderWindow&) const;
+    void Menu(sf::RenderWindow &) const;
+
+public:
+    View(std::vector<Object*>&, Controller &);
+
+    void present(sf::RenderWindow&) const;
 };
 
 

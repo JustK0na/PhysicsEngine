@@ -35,8 +35,9 @@ public:
 
     void updatePosition(std::vector<float>);
     void updateOldPosition(std::vector<float>);
+    void updateForces(std::vector<float>, int);
 
-    int spawn(int x, int y);
+    int spawn(int x, int y, int oldx, int oldy);
 
 
 };

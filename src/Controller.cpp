@@ -8,131 +8,218 @@
 
 Controller::Controller(std::vector<Object *>  &objects):o(objects)
 {
+    level = MENU;
+    state = RUNNING;
+}
+LEVEL Controller::getLevel() const
+{
+    return level;
+}
+HIGHLIGHT Controller::getHighlight() const
+{
+    return highlight;
+}
+void Controller::changeLevel(sf::Event &event, sf::Window &win)
+{
+    if(level!=MENU)
+        return;
+    if(sf::Mouse::getPosition(win).x>=512&&sf::Mouse::getPosition(win).x<=1086)
+    {
+        if(sf::Mouse::getPosition(win).y>=304&&sf::Mouse::getPosition(win).y<=351)
+        {
+            highlight = GRAVITATIONAL;
+            std::cout<<"\nFIELD: "<<highlight;
+            if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                level=GRAVITYFIELD;
+            return;
+        }
+    }
+     if(sf::Mouse::getPosition(win).x>=525.5&&sf::Mouse::getPosition(win).x<=1070.5)
+    {
+        if(sf::Mouse::getPosition(win).y>=454&&sf::Mouse::getPosition(win).y<=506)
+        {
+            highlight = PLANETARY;
+            std::cout<<"\nPLANETARY: "<< highlight;
+            if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                level=PLANETARYSYSTEM;
+            return;
+        }
+
+    }
+
+     if(sf::Mouse::getPosition(win).x>=706.5&&sf::Mouse::getPosition(win).x<=891,5)
+    {
+        if(sf::Mouse::getPosition(win).y>=726&&sf::Mouse::getPosition(win).y<=775)
+        {
+            highlight = EXIT;
+           std::cout<<"\nEXIT: "<< highlight;
+            if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                win.close();
+            return;
+        }
+
+    }
+
+
+        highlight = NONE;
+        std::cout << "\nNONE: " << highlight;
+
 
 }
-
-void Controller::addObject(sf::Event &event)
+void Controller::pause(sf::Event &)
 {
+    state = PAUSE;
+}
+void Controller::resume(sf::Event &)
+{
+    state = RUNNING;
+}
+void Controller::addObject(sf::Event &event, sf::Window &win)
+{
+    if(level==MENU)
+        return;
+
     if(event.mouseButton.button==sf::Mouse::Left)
     {
+        int x = event.mouseButton.x;
+        int y = event.mouseButton.y;
+
         o.push_back(new Circle);
-        if(o.back()->spawn(event.mouseButton.x,event.mouseButton.y)==0)
+
+        if(o.back()->spawn(x,y,x,y)==0)
         {
             std::cout<<"\nObject has been created: ";
         }
         std::cout<<o.back()->getPosition()[0]<<" "<<o.back()->getPosition()[1];
     }
 }
-std::vector<float> Controller::acceleration(Object *o)
+void Controller::addForces(Object *o)
 {
-    float accelerationx=0, accelerationy=0;
-    std::vector<float> acceleration;
-    acceleration.push_back(accelerationx);
-    acceleration.push_back(accelerationy);
+    //Gravity Force:
+    std::vector<float> ForceY;
+    ForceY.push_back(0);
+    ForceY.push_back(0);
 
-    //All forces that impact object in x and y axis divided by mass give acceleration in that direction
-    acceleration[1]=o->getForces()[1]/o->getMass();
+    float gravity;
+    float G = (6.6743 * pow(10, -11));
+    float M = 5.97219 * pow(10, 24);
+    float R = 6.3781 * pow(10, 6);
 
 
-    return  acceleration;
+    gravity = G * M * o->getMass()/pow(R,2);
+    ForceY.at(1)=+gravity;
+    //std::cout<<"Gravity: "<<gravity<<std::endl;
+
+    o->updateForces(ForceY, 1);
 
 
 }
+std::vector<float> Controller::calculateAcceleration(Object *o)
+{
+    std::vector<float> acceleration;
+    acceleration.push_back(0);
+    acceleration.push_back(0);
 
-void Controller::solver(Object *o, float dt)
+    acceleration.at(0) = (o->getForces()[0]*FRAMERATE)/o->getMass();
+    acceleration.at(1) = (o->getForces()[1]*FRAMERATE)/o->getMass();
+
+    //std::cout<<"\t\t\t"<<acceleration.at(1)<<std::endl;
+
+    return acceleration;
+
+}
+void Controller::changePosition(Object *o)
 {
     // calculate velocity
     float velocityx, velocityy;
-    velocityx = 0.995 *( o->getPosition()[0]-o->getOldPosition()[0]);
-    velocityy = 0.995 *( o->getPosition()[1]-o->getOldPosition()[1]);
-    //set old position to curren posiotion
+    velocityx = ( o->getPosition()[0]-o->getOldPosition()[0]);
+    velocityy = ( o->getPosition()[1]-o->getOldPosition()[1]);
 
+    //set old position to curren posiotion
     o->updateOldPosition(o->getPosition());
 
     //calculate new position with dt = 1, update by every frame;
     float newPositionx, newPositiony;
 
-    newPositionx=o->getPosition()[0]+velocityx+(acceleration(o)[0]);
-    newPositiony=o->getPosition()[1]+velocityy+(acceleration(o)[1]);
-
-
+    newPositionx=o->getPosition()[0]+velocityx+((calculateAcceleration(o)[0]/pow(FRAMERATE,2)));
+    newPositiony=o->getPosition()[1]+velocityy+((calculateAcceleration(o)[1]/pow(FRAMERATE,2)));
+    //Something wrong with acceleration * Delta t^2;
     //set new position
     std::vector<float> newPosition;
     newPosition.push_back(newPositionx);
     newPosition.push_back(newPositiony);
     o->updatePosition(newPosition);
+    //std::cout<<"\nPositionX: "<< newPositionx<<"\tPositionY: "<<newPositiony<<"\tVelocity X: "<<velocityx<<"\tVelocity Y: "<<velocityy<<"\tAcceleration Y: "<<((calculateAcceleration(o)[1])/FRAMERATE);
 
 }
 void Controller::update()
 {
-    for(unsigned int i =0; i<o.size(); i++)
-    {
-        solver(o[i],1);           //Calculate position
+    if(state==PAUSE)
+        return;
 
-        constrainEdges(o[i]);       //Check constrains
-        std::cout<<"\nVx: "<<o[i]->getPosition()[0]-o[i]->getOldPosition()[0]<<"\t Oldx: "<<o[i]->getOldPosition()[0]<<"    Curx: "<<o[i]->getPosition()[0];
+    for(unsigned int i = 0; i<o.size(); i++)
+    {
+        addForces(o[i]);
+        changePosition(o[i]);
+        constrainEdges(o[i]);
+        /*Colission();
+        Constrain();*/
     }
-    checkCollision();             //Check collision
 }
 int Controller::constrainEdges(Object *o)
 {
-
-        if(o->getPosition()[1]+30>720)  //screen height
+        if(o->getPosition()[1]+o->info()[0]>SCREENHEIGHT)  //screen height
         {
-            float Vy = o->getPosition()[1]-o->getOldPosition()[1];
+            float Vy = abs(o->getPosition()[1]-o->getOldPosition()[1]);
 
-            std::vector<float> newPosition{o->getPosition()[0],720-SIZE};
-            std::vector<float> oldPosition{o->getOldPosition()[0],720-SIZE+Vy};
+            std::vector<float> newPosition{o->getPosition()[0],SCREENHEIGHT-o->info()[0]};
+            std::vector<float> oldPosition{o->getOldPosition()[0],SCREENHEIGHT-o->info()[0]+Vy};
             o->updatePosition(newPosition);
             o->updateOldPosition(oldPosition);
-            std::cout<<"\n\t\t\t\tConstarain";
+            //std::cout<<"\n\t\t\t\tConstarain";
            return 1;
         }
-        if(o->getPosition()[1]-30<0)
+        if(o->getPosition()[1]-o->info()[0]<0)
         {
-            float Vy = o->getPosition()[1]-o->getOldPosition()[1];
+            float Vy = abs(o->getPosition()[1]-o->getOldPosition()[1]);
 
-            std::vector<float> newPosition{o->getPosition()[0],0+SIZE};
-            std::vector<float> oldPosition{o->getOldPosition()[0],0+SIZE-Vy};
+            std::vector<float> newPosition{o->getPosition()[0],0+o->info()[0]};
+            std::vector<float> oldPosition{o->getOldPosition()[0],0+o->info()[0]-Vy};
             o->updatePosition(newPosition);
             o->updateOldPosition(oldPosition);
-            std::cout<<"\n\t\t\t\tConstarain";
+           // std::cout<<"\n\t\t\t\tConstarain";
             return 1;
         }
-        if(o->getPosition()[0]+30>1080)
+        if(o->getPosition()[0]+o->info()[0]>=SCREENWIDTH)
         {
-            float Vx = o->getPosition()[0]-o->getOldPosition()[0];
+            float Vx = abs(o->getPosition()[0]-o->getOldPosition()[0]);
 
-            std::vector<float> newPosition{1080-SIZE,o->getPosition()[1]};
-            std::vector<float> oldPosition{1080-SIZE+Vx,o->getOldPosition()[1]};
+            std::vector<float> newPosition{SCREENWIDTH-o->info()[0],o->getPosition()[1]};
+            std::vector<float> oldPosition{SCREENWIDTH-o->info()[0]+Vx,o->getOldPosition()[1]};
             o->updatePosition(newPosition);
             o->updateOldPosition(oldPosition);
-            std::cout<<"\n\t\t\t\tConstarain";
+            //std::cout<<"\n\t\t\t\tConstarain";
            return 1;
         }
-        if(o->getPosition()[0]-30<0)
+        if(o->getPosition()[0]-o->info()[0]<=0)
         {
-            float Vx = o->getPosition()[0]-o->getOldPosition()[0];
+            float Vx = abs(o->getPosition()[0]-o->getOldPosition()[0]);
 
-            std::vector<float> newPosition{0+SIZE,o->getPosition()[1]};
-            std::vector<float> oldPosition{0+SIZE+Vx,o->getOldPosition()[1]};
+            std::vector<float> newPosition{0+o->info()[0],o->getPosition()[1]};
+            std::vector<float> oldPosition{0+o->info()[0]-Vx,o->getOldPosition()[1]};
             o->updatePosition(newPosition);
             o->updateOldPosition(oldPosition);
-            std::cout<<"\n\t\t\t\tConstarain";
+           // std::cout<<"\n\t\t\t\tConstarain";
            return 1;
         }
     return  0;
 }
 
-void Controller::resolveCollision()
-{
-
-}
 int Controller::checkCollision()
 {
-    for(int i=0; i<o.size(); i++)
+    for(unsigned int i=0; i<o.size(); i++)
     {
-        for(int j=0; j<o.size(); j++) {
+        for(unsigned int j=0; j<o.size(); j++) {
             if(i!=j){
                 //Policz dlugosc wektora pomiedzy srodkami kol
                 float distance = sqrt(pow((o[i]->getPosition()[0] - o[j]->getPosition()[0]), 2) + pow((o[i]->getPosition()[1] - o[j]->getPosition()[1]), 2));
@@ -141,7 +228,7 @@ int Controller::checkCollision()
 
                  //jesli dlugosc wektora mniejsza/rowna sumie dlugosci promieni oblicz kolizje
                  if (distance <= radiusTotal) {
-                     resolveCollision(o[i],o[j]);
+                   //  resolveCollision(o[i],o[j]);
                     std::cout << "COLLISION!!!\n";
                 }
             }
@@ -161,12 +248,19 @@ void Controller::control(sf::RenderWindow &win)
                 win.close();
                 break;
             case sf::Event::MouseButtonPressed:
-                addObject(event);
+                pause(event);
+                addObject(event, win);
                 break;
-
+            case sf::Event::MouseButtonReleased:
+                resume(event);
+                break;
+            case sf::Event::MouseMoved:
+                break;
             default:
                 break;
         }
     }
+    //addObject(event, win);
+    changeLevel(event,win);
     update();
 }

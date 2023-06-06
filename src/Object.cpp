@@ -18,8 +18,8 @@ Object::Object()
     forces.push_back(0);
     forces.push_back(0);
     //Gravity, Y axis
-    forces[1]+=GRAVITYFORCE;
-    //Friction
+    //forces[1]+=GRAVITYFORCE;
+    //Friction*/
 
 }
 
@@ -41,10 +41,10 @@ float Object::getMass() const
 {
     return  mass;
 }
-int Object::spawn(int x, int y)
+int Object::spawn(int x, int y, int oldx, int oldy)
 {
-    int random1 = rand()%40-20;
-    int random2 = rand()%40-20;
+    int random1 = rand()%20-10;
+    int random2 = rand()%20-10;
     oldPosition[0]=x+random1;
     oldPosition[1]=y+random2;
 
@@ -62,6 +62,12 @@ void Object::updatePosition(std::vector<float> newPosition)
 void Object::updateOldPosition(std::vector<float> newPosition) {
     oldPosition=newPosition;
 }
+void Object::updateForces(std::vector<float> forcesChange, int axis)
+{
+    forces.at(axis) = forcesChange[axis];
+}
+
+
 void Object::draw(sf::RenderWindow&) const {}
 std::vector<float> Object::info() const {
     std::vector<float> i_nfo;
