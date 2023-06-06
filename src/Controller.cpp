@@ -93,6 +93,26 @@ void Controller::addObject(sf::Event &event, sf::Window &win)
         std::cout<<o.back()->getPosition()[0]<<" "<<o.back()->getPosition()[1];
     }
 }
+void Controller::setStartingVelocity(sf::Event& event)
+{
+    if(event.mouseButton.button==sf::Mouse::Left) {
+        if(o.size()>0) {
+            float x,y;
+            float Vx = (o.back()->getPosition()[0])-(event.mouseButton.x);
+            float Vy = (o.back()->getPosition()[1])-(event.mouseButton.y);
+
+
+            x=(o.back()->getPosition()[0])-Vx/10;
+            y=(o.back()->getPosition()[1])-Vy/10;
+
+            std::cout<<"\nVx: "<<Vx<<"    Vy: "<<Vy<<"   x: "<<x<<"    y: "<<y;
+            std::vector<float> oldPosition;
+            oldPosition.push_back(x);
+            oldPosition.push_back(y);
+            o.back()->updateOldPosition(oldPosition);
+        }
+    }
+}
 void Controller::addForces(Object *o)
 {
     //Gravity Force:
@@ -252,6 +272,7 @@ void Controller::control(sf::RenderWindow &win)
                 addObject(event, win);
                 break;
             case sf::Event::MouseButtonReleased:
+                setStartingVelocity(event);
                 resume(event);
                 break;
             case sf::Event::MouseMoved:

@@ -42,6 +42,8 @@ class Controller {
     STATE state;
 
     void addObject(sf::Event &, sf::Window &);
+    void setStartingVelocity(sf::Event &);
+
     void addForces(Object *);
 
     std::vector<float> calculateAcceleration(Object *   );
