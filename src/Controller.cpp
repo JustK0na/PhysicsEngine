@@ -27,7 +27,7 @@ void Controller::changeLevel(sf::Event &event, sf::Window &win)
 {
     //if(level!=MENU)
     //    return;
-    if(state==MENU) {
+    if(level==MENU) {
         if (sf::Mouse::getPosition(win).x >= 512 && sf::Mouse::getPosition(win).x <= 1086) {
             if (sf::Mouse::getPosition(win).y >= 304 && sf::Mouse::getPosition(win).y <= 351) {
                 highlight = GRAVITATIONAL;
