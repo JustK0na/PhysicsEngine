@@ -19,64 +19,144 @@ HIGHLIGHT Controller::getHighlight() const
 {
     return highlight;
 }
+STATE Controller::getState() const
+{
+    return state;
+}
 void Controller::changeLevel(sf::Event &event, sf::Window &win)
 {
-    if(level!=MENU)
-        return;
-    if(sf::Mouse::getPosition(win).x>=512&&sf::Mouse::getPosition(win).x<=1086)
-    {
-        if(sf::Mouse::getPosition(win).y>=304&&sf::Mouse::getPosition(win).y<=351)
-        {
-            highlight = GRAVITATIONAL;
-            std::cout<<"\nFIELD: "<<highlight;
-            if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
-                level=GRAVITYFIELD;
-            return;
+    //if(level!=MENU)
+    //    return;
+    if(state==MENU) {
+        if (sf::Mouse::getPosition(win).x >= 512 && sf::Mouse::getPosition(win).x <= 1086) {
+            if (sf::Mouse::getPosition(win).y >= 304 && sf::Mouse::getPosition(win).y <= 351) {
+                highlight = GRAVITATIONAL;
+                std::cout << "\nFIELD: " << highlight;
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                    level = GRAVITYFIELD;
+                return;
+            }
         }
-    }
-     if(sf::Mouse::getPosition(win).x>=525.5&&sf::Mouse::getPosition(win).x<=1070.5)
-    {
-        if(sf::Mouse::getPosition(win).y>=454&&sf::Mouse::getPosition(win).y<=506)
-        {
-            highlight = PLANETARY;
-            std::cout<<"\nPLANETARY: "<< highlight;
-            if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
-                level=PLANETARYSYSTEM;
-            return;
-        }
+        if (sf::Mouse::getPosition(win).x >= 525.5 && sf::Mouse::getPosition(win).x <= 1070.5) {
+            if (sf::Mouse::getPosition(win).y >= 454 && sf::Mouse::getPosition(win).y <= 506) {
+                highlight = PLANETARY;
+                std::cout << "\nPLANETARY: " << highlight;
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                    level = PLANETARYSYSTEM;
+                return;
+            }
 
-    }
-
-     if(sf::Mouse::getPosition(win).x>=706.5&&sf::Mouse::getPosition(win).x<=891,5)
-    {
-        if(sf::Mouse::getPosition(win).y>=726&&sf::Mouse::getPosition(win).y<=775)
-        {
-            highlight = EXIT;
-           std::cout<<"\nEXIT: "<< highlight;
-            if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
-                win.close();
-            return;
         }
 
+        if (sf::Mouse::getPosition(win).x >= 706.5 && sf::Mouse::getPosition(win).x <= 891, 5) {
+            if (sf::Mouse::getPosition(win).y >= 726 && sf::Mouse::getPosition(win).y <= 775) {
+                highlight = EXIT1;
+                std::cout << "\nEXIT: " << highlight;
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                    win.close();
+                return;
+            }
+
+        }
     }
-
-
+    if(state==PAUSE_MENU)
+    {
+        if (sf::Mouse::getPosition(win).x >= 512 && sf::Mouse::getPosition(win).x <= 1086) {
+            if (sf::Mouse::getPosition(win).y >= 304 && sf::Mouse::getPosition(win).y <= 351) {
+                highlight = RESUME;
+                std::cout << "\nEXIT2: " << highlight;
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                    level = GRAVITYFIELD;
+                return;
+            }
+        }
+        if (sf::Mouse::getPosition(win).x >= 512 && sf::Mouse::getPosition(win).x <= 1086) {
+            if (sf::Mouse::getPosition(win).y >= 304 && sf::Mouse::getPosition(win).y <= 351) {
+                highlight = OPTIONS;
+                std::cout << "\nEXIT2: " << highlight;
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                    level = GRAVITYFIELD;
+                return;
+            }
+        }
+        if (sf::Mouse::getPosition(win).x >= 512 && sf::Mouse::getPosition(win).x <= 1086) {
+            if (sf::Mouse::getPosition(win).y >= 304 && sf::Mouse::getPosition(win).y <= 351) {
+                highlight = BACK;
+                std::cout << "\nEXIT2: " << highlight;
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                    level = GRAVITYFIELD;
+                return;
+            }
+        }
+        if (sf::Mouse::getPosition(win).x >= 512 && sf::Mouse::getPosition(win).x <= 1086) {
+            if (sf::Mouse::getPosition(win).y >= 304 && sf::Mouse::getPosition(win).y <= 351) {
+                highlight = EXIT2;
+                std::cout << "\nEXIT2: " << highlight;
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                    level = GRAVITYFIELD;
+                return;
+            }
+        }
+    }
         highlight = NONE;
         std::cout << "\nNONE: " << highlight;
 
 
 }
-void Controller::pause(sf::Event &)
+void Controller::pause()
 {
-    state = PAUSE;
+    if(state==RUNNING)
+        state = PAUSE_POINTER;
 }
 void Controller::resume(sf::Event &)
 {
+    if(state==PAUSE_MENU||state==PAUSE_)
+        return;
     state = RUNNING;
 }
+void Controller::restart(sf::Event & event)
+{
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+    {
+        o.clear();
+    }
+}
+void Controller::stopStart(sf::Event &event)
+{
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+    {
+        if(state == PAUSE_)
+        {
+            state = RUNNING;
+            return;
+        }
+
+        else if (state == RUNNING)
+        {
+            state = PAUSE_;
+            return;
+        }
+
+    }
+}
+
+void Controller::menu()
+{
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+    {
+        if(state!=PAUSE_MENU) {
+            state = PAUSE_MENU;
+            return;
+        }
+        state = RUNNING;
+    }
+}
+
 void Controller::addObject(sf::Event &event, sf::Window &win)
 {
     if(level==MENU)
+        return;
+    if(state==PAUSE_MENU||state==PAUSE_)
         return;
 
     if(event.mouseButton.button==sf::Mouse::Left)
@@ -95,6 +175,8 @@ void Controller::addObject(sf::Event &event, sf::Window &win)
 }
 void Controller::setStartingVelocity(sf::Event& event)
 {
+    if(state==PAUSE_||state==PAUSE_MENU)
+        return;
     if(event.mouseButton.button==sf::Mouse::Left) {
         if(o.size()>0) {
             float x,y;
@@ -163,18 +245,18 @@ void Controller::changePosition(Object *o)
 
     newPositionx=o->getPosition()[0]+velocityx+((calculateAcceleration(o)[0]/pow(FRAMERATE,2)));
     newPositiony=o->getPosition()[1]+velocityy+((calculateAcceleration(o)[1]/pow(FRAMERATE,2)));
-    //Something wrong with acceleration * Delta t^2;
+
     //set new position
     std::vector<float> newPosition;
     newPosition.push_back(newPositionx);
     newPosition.push_back(newPositiony);
     o->updatePosition(newPosition);
-    //std::cout<<"\nPositionX: "<< newPositionx<<"\tPositionY: "<<newPositiony<<"\tVelocity X: "<<velocityx<<"\tVelocity Y: "<<velocityy<<"\tAcceleration Y: "<<((calculateAcceleration(o)[1])/FRAMERATE);
+    //std::cout<<"\nPositionX: "<< o->getPosition()[0]<<"\tPositionY: "<<o->getPosition()[1]<<"\tVelocity X: "<<velocityx<<"\tVelocity Y: "<<velocityy<<"\tAcceleration Y: "<<((calculateAcceleration(o)[1])/FRAMERATE);
 
 }
 void Controller::update()
 {
-    if(state==PAUSE)
+    if(state==PAUSE_||state==PAUSE_POINTER||state==PAUSE_MENU)
         return;
 
     for(unsigned int i = 0; i<o.size(); i++)
@@ -182,13 +264,13 @@ void Controller::update()
         addForces(o[i]);
         changePosition(o[i]);
         constrainEdges(o[i]);
-        /*Colission();
-        Constrain();*/
+        //checkCollision();
+        //std::cout<<"\n...";
     }
 }
 int Controller::constrainEdges(Object *o)
 {
-        if(o->getPosition()[1]+o->info()[0]>SCREENHEIGHT)  //screen height
+        if(o->getPosition()[1]+o->info()[0]>=SCREENHEIGHT)
         {
             float Vy = abs(o->getPosition()[1]-o->getOldPosition()[1]);
 
@@ -197,9 +279,8 @@ int Controller::constrainEdges(Object *o)
             o->updatePosition(newPosition);
             o->updateOldPosition(oldPosition);
             //std::cout<<"\n\t\t\t\tConstarain";
-           return 1;
         }
-        if(o->getPosition()[1]-o->info()[0]<0)
+        if(o->getPosition()[1]-o->info()[0]<=0)
         {
             float Vy = abs(o->getPosition()[1]-o->getOldPosition()[1]);
 
@@ -208,7 +289,6 @@ int Controller::constrainEdges(Object *o)
             o->updatePosition(newPosition);
             o->updateOldPosition(oldPosition);
            // std::cout<<"\n\t\t\t\tConstarain";
-            return 1;
         }
         if(o->getPosition()[0]+o->info()[0]>=SCREENWIDTH)
         {
@@ -219,7 +299,6 @@ int Controller::constrainEdges(Object *o)
             o->updatePosition(newPosition);
             o->updateOldPosition(oldPosition);
             //std::cout<<"\n\t\t\t\tConstarain";
-           return 1;
         }
         if(o->getPosition()[0]-o->info()[0]<=0)
         {
@@ -230,7 +309,6 @@ int Controller::constrainEdges(Object *o)
             o->updatePosition(newPosition);
             o->updateOldPosition(oldPosition);
            // std::cout<<"\n\t\t\t\tConstarain";
-           return 1;
         }
     return  0;
 }
@@ -268,20 +346,22 @@ void Controller::control(sf::RenderWindow &win)
                 win.close();
                 break;
             case sf::Event::MouseButtonPressed:
-                pause(event);
+                pause();
                 addObject(event, win);
                 break;
             case sf::Event::MouseButtonReleased:
                 setStartingVelocity(event);
                 resume(event);
                 break;
-            case sf::Event::MouseMoved:
+            case sf::Event::KeyPressed:
+                restart(event);
+                stopStart(event);
+                menu();
                 break;
             default:
                 break;
         }
     }
-    //addObject(event, win);
     changeLevel(event,win);
     update();
 }

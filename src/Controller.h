@@ -27,12 +27,19 @@ enum LEVEL{
 };
 enum STATE{
     RUNNING,
-    PAUSE
+    PAUSE_POINTER,
+    PAUSE_,
+    PAUSE_MENU
 };
 enum HIGHLIGHT{
     GRAVITATIONAL,
     PLANETARY,
-    EXIT,
+    EXIT1,
+    RESUME,
+    OPTIONS,
+    BACK,
+    EXIT2,
+
     NONE
 };
 class Controller {
@@ -48,25 +55,34 @@ class Controller {
 
     std::vector<float> calculateAcceleration(Object *   );
 
+    int constrainEdges(Object *o);
+
     void changePosition(Object *);
+    void changeLevel(sf::Event &, sf::Window &);
+
+    void pause();
+    void resume(sf::Event &);
+
+    void restart(sf::Event &);
+
+    void stopStart(sf::Event &);
+
+    void menu();
 
     void update();
 
-
-    void changeLevel(sf::Event &, sf::Window &);
-
-    void pause(sf::Event &);
-    void resume(sf::Event &);
 public:
     Controller(std::vector<Object* > &);
     void control(sf::RenderWindow &);
 
-    int constrainEdges(Object *o);
+
     int checkCollision();
     void resolveCollision(Object*,Object*);
 
     LEVEL getLevel() const;
     HIGHLIGHT getHighlight() const;
+    STATE getState() const;
+    std::vector<float> getMousePosition() const;
 };
 
 
