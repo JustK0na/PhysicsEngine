@@ -13,13 +13,12 @@ Object::Object()
     currentPosition.push_back(0);
 
     mass=MASS;
-    //Forces that are impacting every object
+
 
     forces.push_back(0);
     forces.push_back(0);
-    //Gravity, Y axis
-    //forces[1]+=GRAVITYFORCE;
-    //Friction*/
+
+    timeOfBirth = 0;
 
 }
 
@@ -41,8 +40,12 @@ float Object::getMass() const
 {
     return  mass;
 }
-int Object::spawn(int x, int y, int oldx, int oldy)
+int Object::getTimeOfBirth() const {
+    return timeOfBirth;
+}
+int Object::spawn(int x, int y, int oldx, int oldy, int time)
 {
+    timeOfBirth = time;
     int random1 = rand()%20-10;
     int random2 = rand()%20-10;
     oldPosition[0]=x+random1;

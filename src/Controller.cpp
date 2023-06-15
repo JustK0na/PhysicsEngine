@@ -10,6 +10,7 @@ Controller::Controller(std::vector<Object *>  &objects):o(objects)
 {
     level = MENU;
     state = RUNNING;
+    globalTime = 0;
 }
 LEVEL Controller::getLevel() const
 {
@@ -61,39 +62,42 @@ void Controller::changeLevel(sf::Event &event, sf::Window &win)
     }
     if(state==PAUSE_MENU)
     {
-        if (sf::Mouse::getPosition(win).x >= 512 && sf::Mouse::getPosition(win).x <= 1086) {
-            if (sf::Mouse::getPosition(win).y >= 304 && sf::Mouse::getPosition(win).y <= 351) {
+        if (sf::Mouse::getPosition(win).x >= 656 && sf::Mouse::getPosition(win).x <= 940) {
+            if (sf::Mouse::getPosition(win).y >= 264 && sf::Mouse::getPosition(win).y <= 310) {
                 highlight = RESUME;
-                std::cout << "\nEXIT2: " << highlight;
+                std::cout << "\nRESUME: " << highlight;
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-                    level = GRAVITYFIELD;
+                    state = RUNNING;
                 return;
             }
         }
-        if (sf::Mouse::getPosition(win).x >= 512 && sf::Mouse::getPosition(win).x <= 1086) {
-            if (sf::Mouse::getPosition(win).y >= 304 && sf::Mouse::getPosition(win).y <= 351) {
+        if (sf::Mouse::getPosition(win).x >= 657 && sf::Mouse::getPosition(win).x <= 941) {
+            if (sf::Mouse::getPosition(win).y >= 389 && sf::Mouse::getPosition(win).y <= 450) {
                 highlight = OPTIONS;
-                std::cout << "\nEXIT2: " << highlight;
+                std::cout << "\nOPTIONS: " << highlight;
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
                     level = GRAVITYFIELD;
                 return;
             }
         }
-        if (sf::Mouse::getPosition(win).x >= 512 && sf::Mouse::getPosition(win).x <= 1086) {
-            if (sf::Mouse::getPosition(win).y >= 304 && sf::Mouse::getPosition(win).y <= 351) {
+        if (sf::Mouse::getPosition(win).x >= 561.5 && sf::Mouse::getPosition(win).x <= 1034.5) {
+            if (sf::Mouse::getPosition(win).y >= 526 && sf::Mouse::getPosition(win).y <= 571) {
                 highlight = BACK;
-                std::cout << "\nEXIT2: " << highlight;
-                if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-                    level = GRAVITYFIELD;
+                std::cout << "\nBack: " << highlight;
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                    state = RUNNING;
+                    o.clear();
+                    level = MENU;
+                }
                 return;
             }
         }
-        if (sf::Mouse::getPosition(win).x >= 512 && sf::Mouse::getPosition(win).x <= 1086) {
-            if (sf::Mouse::getPosition(win).y >= 304 && sf::Mouse::getPosition(win).y <= 351) {
+        if (sf::Mouse::getPosition(win).x >= 723 && sf::Mouse::getPosition(win).x <= 875) {
+            if (sf::Mouse::getPosition(win).y >= 704 && sf::Mouse::getPosition(win).y <= 745) {
                 highlight = EXIT2;
                 std::cout << "\nEXIT2: " << highlight;
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-                    level = GRAVITYFIELD;
+                    win.close();
                 return;
             }
         }
@@ -166,7 +170,7 @@ void Controller::addObject(sf::Event &event, sf::Window &win)
 
         o.push_back(new Circle);
 
-        if(o.back()->spawn(x,y,x,y)==0)
+        if(o.back()->spawn(x,y,x,y,globalTime)==0)
         {
             std::cout<<"\nObject has been created: ";
         }
@@ -179,19 +183,21 @@ void Controller::setStartingVelocity(sf::Event& event)
         return;
     if(event.mouseButton.button==sf::Mouse::Left) {
         if(o.size()>0) {
-            float x,y;
-            float Vx = (o.back()->getPosition()[0])-(event.mouseButton.x);
-            float Vy = (o.back()->getPosition()[1])-(event.mouseButton.y);
+            if(o.back()->getTimeOfBirth()==globalTime) {
+                float x, y;
+                float Vx = (o.back()->getPosition()[0]) - (event.mouseButton.x);
+                float Vy = (o.back()->getPosition()[1]) - (event.mouseButton.y);
 
 
-            x=(o.back()->getPosition()[0])-Vx/10;
-            y=(o.back()->getPosition()[1])-Vy/10;
+                x = (o.back()->getPosition()[0]) - Vx / 10;
+                y = (o.back()->getPosition()[1]) - Vy / 10;
 
-            std::cout<<"\nVx: "<<Vx<<"    Vy: "<<Vy<<"   x: "<<x<<"    y: "<<y;
-            std::vector<float> oldPosition;
-            oldPosition.push_back(x);
-            oldPosition.push_back(y);
-            o.back()->updateOldPosition(oldPosition);
+                std::cout << "\nVx: " << Vx << "    Vy: " << Vy << "   x: " << x << "    y: " << y;
+                std::vector<float> oldPosition;
+                oldPosition.push_back(x);
+                oldPosition.push_back(y);
+                o.back()->updateOldPosition(oldPosition);
+            }
         }
     }
 }
@@ -261,6 +267,9 @@ void Controller::update()
 
     for(unsigned int i = 0; i<o.size(); i++)
     {
+        if(globalTime>1000000)
+            globalTime = 0;
+        globalTime++;
         addForces(o[i]);
         changePosition(o[i]);
         constrainEdges(o[i]);

@@ -22,22 +22,25 @@ class Object {
     std::vector<float>  currentPosition;
     std::vector<float>  forces;
     float mass;
+    int timeOfBirth;
 public:
     Object();
     std::vector<float> getOldPosition() const ;
     std::vector<float> getPosition() const ;
     std::vector<float> getForces() const ;
     float getMass() const;
+    int getTimeOfBirth() const;
     virtual std::vector<float> info()  const;
 
     virtual void draw(sf::RenderWindow&) const;
+
 
 
     void updatePosition(std::vector<float>);
     void updateOldPosition(std::vector<float>);
     void updateForces(std::vector<float>, int);
 
-    int spawn(int x, int y, int oldx, int oldy);
+    int spawn(int x, int y, int oldx, int oldy, int timeOfBirth);
 
 
 };

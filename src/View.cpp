@@ -132,6 +132,7 @@ void View::menuPause(sf::RenderWindow & win) const
     options.setCharacterSize(45);
     options.setPosition( (SCREENWIDTH/2-sizeX/2) + (popup.getGlobalBounds().width/2) - (options.getGlobalBounds().width/2),
                         resume.getGlobalBounds().top+resume.getGlobalBounds().height+75);
+
     win.draw(options);
 
     sf::Text back("Back to menu", retrogastroll);
@@ -142,6 +143,7 @@ void View::menuPause(sf::RenderWindow & win) const
     back.setCharacterSize(45);
     back.setPosition( (SCREENWIDTH/2-sizeX/2) + (popup.getGlobalBounds().width/2) - (back.getGlobalBounds().width/2),
                          options.getGlobalBounds().top+options.getGlobalBounds().height+75);
+
     win.draw(back);
 
 
@@ -154,8 +156,24 @@ void View::menuPause(sf::RenderWindow & win) const
     exit.setCharacterSize(45);
     exit.setPosition( (SCREENWIDTH/2-sizeX/2) + (popup.getGlobalBounds().width/2) - (exit.getGlobalBounds().width/2),
                             popup.getGlobalBounds().top+popup.getGlobalBounds().height-150);
+    std::cout<<"\nexit2  x,y,height,width: "<<exit.getGlobalBounds().left<<", "<<exit.getGlobalBounds().top<<", "
+             <<exit.getGlobalBounds().height<<", "<<exit.getGlobalBounds().width;
     win.draw(exit);
 
+}
+void View::drawPause(sf::RenderWindow &win) const
+{
+    if(c.getLevel()!=MENU) {
+        if (c.getState() != PAUSE_)
+            return;
+        sf::RectangleShape rect(sf::Vector2f(75, 300));
+        rect.setFillColor(sf::Color(67, 67, 92,150));
+        rect.setPosition((SCREENWIDTH/2)-rect.getGlobalBounds().width, (SCREENHEIGHT/2)-(rect.getGlobalBounds().height/2));
+        win.draw(rect);
+        rect.setPosition((SCREENWIDTH/2)+rect.getGlobalBounds().width, (SCREENHEIGHT/2)-(rect.getGlobalBounds().height/2));
+        win.draw(rect);
+
+    }
 }
 void View::drawObjects(sf::RenderWindow & win) const
 {
@@ -238,6 +256,7 @@ void View::present(sf::RenderWindow &win) const
     drawPointer(win);
     Menu(win);
     menuPause(win);
+    drawPause(win);
     win.display();
 }
 

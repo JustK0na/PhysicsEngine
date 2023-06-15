@@ -47,6 +47,7 @@ class Controller {
     LEVEL level;
     HIGHLIGHT highlight;
     STATE state;
+    int globalTime;
 
     void addObject(sf::Event &, sf::Window &);
     void setStartingVelocity(sf::Event &);
@@ -59,6 +60,9 @@ class Controller {
 
     void changePosition(Object *);
     void changeLevel(sf::Event &, sf::Window &);
+
+    int checkCollision();
+    void resolveCollision(Object*,Object*);
 
     void pause();
     void resume(sf::Event &);
@@ -76,8 +80,7 @@ public:
     void control(sf::RenderWindow &);
 
 
-    int checkCollision();
-    void resolveCollision(Object*,Object*);
+
 
     LEVEL getLevel() const;
     HIGHLIGHT getHighlight() const;
