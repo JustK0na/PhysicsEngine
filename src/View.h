@@ -25,6 +25,7 @@ class View {
     void drawPointer(sf::RenderWindow& ) const; //tmp name
     void Menu(sf::RenderWindow &) const;
     void menuPause(sf::RenderWindow &) const;
+    void options(sf::RenderWindow &) const;
     void drawPause(sf::RenderWindow &) const;
     //text string, font, text color, text size, text outline color,
     //outline thickness, text position x, text position y

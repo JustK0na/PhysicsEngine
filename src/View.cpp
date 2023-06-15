@@ -86,7 +86,7 @@ void View::menuPause(sf::RenderWindow & win) const
 {
     if(c.getState()!=PAUSE_MENU)
         return;
-    if(c.getLevel()==MENU)
+    if(c.getLevel()!=GRAVITYFIELD)
         return;
     int sizeX = 700, sizeY = 800;
     sf::RectangleShape popup(sf::Vector2f(sizeX,sizeY));
@@ -160,6 +160,14 @@ void View::menuPause(sf::RenderWindow & win) const
              <<exit.getGlobalBounds().height<<", "<<exit.getGlobalBounds().width;
     win.draw(exit);
 
+}
+void View::options(sf::RenderWindow &win) const
+{
+    if(c.getLevel()!=OPTIONS_MENU)
+        return;
+    sf::RectangleShape rect(sf::Vector2f(1000, 700));
+
+    win.draw(rect);
 }
 void View::drawPause(sf::RenderWindow &win) const
 {
@@ -255,6 +263,7 @@ void View::present(sf::RenderWindow &win) const
     drawObjects(win);
     drawPointer(win);
     Menu(win);
+    options(win);
     menuPause(win);
     drawPause(win);
     win.display();

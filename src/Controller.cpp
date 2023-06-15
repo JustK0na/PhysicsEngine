@@ -26,8 +26,6 @@ STATE Controller::getState() const
 }
 void Controller::changeLevel(sf::Event &event, sf::Window &win)
 {
-    //if(level!=MENU)
-    //    return;
     if(level==MENU) {
         if (sf::Mouse::getPosition(win).x >= 512 && sf::Mouse::getPosition(win).x <= 1086) {
             if (sf::Mouse::getPosition(win).y >= 304 && sf::Mouse::getPosition(win).y <= 351) {
@@ -76,7 +74,7 @@ void Controller::changeLevel(sf::Event &event, sf::Window &win)
                 highlight = OPTIONS;
                 std::cout << "\nOPTIONS: " << highlight;
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-                    level = GRAVITYFIELD;
+                    level = OPTIONS_MENU;
                 return;
             }
         }
@@ -101,6 +99,11 @@ void Controller::changeLevel(sf::Event &event, sf::Window &win)
                 return;
             }
         }
+    }
+    if(level==OPTIONS_MENU)
+    {
+        if(sf::Keyboard::isKeyPressed((sf::Keyboard::Escape)));
+            level=GRAVITYFIELD;
     }
         highlight = NONE;
         std::cout << "\nNONE: " << highlight;
