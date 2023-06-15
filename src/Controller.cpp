@@ -171,7 +171,7 @@ void Controller::addObject(sf::Event &event, sf::Window &win)
         int x = event.mouseButton.x;
         int y = event.mouseButton.y;
 
-        o.push_back(new Circle);
+        o.push_back(new Circle); //tego tutaj nie może być !!!
 
         if(o.back()->spawn(x,y,x,y,globalTime)==0)
         {
