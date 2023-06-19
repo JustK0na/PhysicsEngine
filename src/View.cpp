@@ -156,16 +156,17 @@ void View::menuPause(sf::RenderWindow & win) const
     exit.setCharacterSize(45);
     exit.setPosition( (SCREENWIDTH/2-sizeX/2) + (popup.getGlobalBounds().width/2) - (exit.getGlobalBounds().width/2),
                             popup.getGlobalBounds().top+popup.getGlobalBounds().height-150);
-    std::cout<<"\nexit2  x,y,height,width: "<<exit.getGlobalBounds().left<<", "<<exit.getGlobalBounds().top<<", "
-             <<exit.getGlobalBounds().height<<", "<<exit.getGlobalBounds().width;
+    //std::cout<<"\nexit2  x,y,height,width: "<<exit.getGlobalBounds().left<<", "<<exit.getGlobalBounds().top<<", "
+     //        <<exit.getGlobalBounds().height<<", "<<exit.getGlobalBounds().width;
     win.draw(exit);
 
 }
 void View::options(sf::RenderWindow &win) const
 {
-    if(c.getLevel()!=OPTIONS_MENU)
+    if(c.getState()!=PAUSE_OPTIONS)
         return;
     sf::RectangleShape rect(sf::Vector2f(1000, 700));
+    rect.setPosition(SCREENWIDTH/2-(rect.getGlobalBounds().width/2), SCREENHEIGHT/2-(rect.getGlobalBounds().height/2));
 
     win.draw(rect);
 }

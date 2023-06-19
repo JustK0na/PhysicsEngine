@@ -30,7 +30,7 @@ void Controller::changeLevel(sf::Event &event, sf::Window &win)
         if (sf::Mouse::getPosition(win).x >= 512 && sf::Mouse::getPosition(win).x <= 1086) {
             if (sf::Mouse::getPosition(win).y >= 304 && sf::Mouse::getPosition(win).y <= 351) {
                 highlight = GRAVITATIONAL;
-                std::cout << "\nFIELD: " << highlight;
+                //std::cout << "\nFIELD: " << highlight;
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
                     level = GRAVITYFIELD;
                 return;
@@ -39,7 +39,7 @@ void Controller::changeLevel(sf::Event &event, sf::Window &win)
         if (sf::Mouse::getPosition(win).x >= 525.5 && sf::Mouse::getPosition(win).x <= 1070.5) {
             if (sf::Mouse::getPosition(win).y >= 454 && sf::Mouse::getPosition(win).y <= 506) {
                 highlight = PLANETARY;
-                std::cout << "\nPLANETARY: " << highlight;
+                //std::cout << "\nPLANETARY: " << highlight;
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
                     level = PLANETARYSYSTEM;
                 return;
@@ -50,7 +50,7 @@ void Controller::changeLevel(sf::Event &event, sf::Window &win)
         if (sf::Mouse::getPosition(win).x >= 706.5 && sf::Mouse::getPosition(win).x <= 891, 5) {
             if (sf::Mouse::getPosition(win).y >= 726 && sf::Mouse::getPosition(win).y <= 775) {
                 highlight = EXIT1;
-                std::cout << "\nEXIT: " << highlight;
+                //std::cout << "\nEXIT: " << highlight;
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
                     win.close();
                 return;
@@ -63,7 +63,7 @@ void Controller::changeLevel(sf::Event &event, sf::Window &win)
         if (sf::Mouse::getPosition(win).x >= 656 && sf::Mouse::getPosition(win).x <= 940) {
             if (sf::Mouse::getPosition(win).y >= 264 && sf::Mouse::getPosition(win).y <= 310) {
                 highlight = RESUME;
-                std::cout << "\nRESUME: " << highlight;
+                //std::cout << "\nRESUME: " << highlight;
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
                     state = RUNNING;
                 return;
@@ -72,16 +72,16 @@ void Controller::changeLevel(sf::Event &event, sf::Window &win)
         if (sf::Mouse::getPosition(win).x >= 657 && sf::Mouse::getPosition(win).x <= 941) {
             if (sf::Mouse::getPosition(win).y >= 389 && sf::Mouse::getPosition(win).y <= 450) {
                 highlight = OPTIONS;
-                std::cout << "\nOPTIONS: " << highlight;
+               // std::cout << "\nOPTIONS: " << highlight;
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-                    level = OPTIONS_MENU;
+                    state = PAUSE_OPTIONS;
                 return;
             }
         }
         if (sf::Mouse::getPosition(win).x >= 561.5 && sf::Mouse::getPosition(win).x <= 1034.5) {
             if (sf::Mouse::getPosition(win).y >= 526 && sf::Mouse::getPosition(win).y <= 571) {
                 highlight = BACK;
-                std::cout << "\nBack: " << highlight;
+                //std::cout << "\nBack: " << highlight;
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                     state = RUNNING;
                     o.clear();
@@ -93,20 +93,20 @@ void Controller::changeLevel(sf::Event &event, sf::Window &win)
         if (sf::Mouse::getPosition(win).x >= 723 && sf::Mouse::getPosition(win).x <= 875) {
             if (sf::Mouse::getPosition(win).y >= 704 && sf::Mouse::getPosition(win).y <= 745) {
                 highlight = EXIT2;
-                std::cout << "\nEXIT2: " << highlight;
+               // std::cout << "\nEXIT2: " << highlight;
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
                     win.close();
                 return;
             }
         }
     }
-    if(level==OPTIONS_MENU)
+    if(state==PAUSE_OPTIONS)
     {
-        if(sf::Keyboard::isKeyPressed((sf::Keyboard::Escape)));
-            level=GRAVITYFIELD;
+        if(sf::Keyboard::isKeyPressed((sf::Keyboard::Escape)))
+            state=PAUSE_MENU;
     }
         highlight = NONE;
-        std::cout << "\nNONE: " << highlight;
+        //std::cout << "\nNONE: " << highlight;
 
 
 }
@@ -117,7 +117,7 @@ void Controller::pause()
 }
 void Controller::resume(sf::Event &)
 {
-    if(state==PAUSE_MENU||state==PAUSE_)
+    if(state==PAUSE_MENU||state==PAUSE_||state==PAUSE_OPTIONS)
         return;
     state = RUNNING;
 }
@@ -128,7 +128,7 @@ void Controller::restart(sf::Event & event)
         o.clear();
     }
 }
-void Controller::stopStart(sf::Event &event)
+void Controller::pausePlay(sf::Event &event)
 {
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::P))
     {
@@ -171,7 +171,7 @@ void Controller::addObject(sf::Event &event, sf::Window &win)
         int x = event.mouseButton.x;
         int y = event.mouseButton.y;
 
-        o.push_back(new Circle); //tego tutaj nie może być !!!
+        o.push_back(new Circle); //tego tutaj nie może być !!!e
 
         if(o.back()->spawn(x,y,x,y,globalTime)==0)
         {
@@ -265,7 +265,7 @@ void Controller::changePosition(Object *o)
 }
 void Controller::update()
 {
-    if(state==PAUSE_||state==PAUSE_POINTER||state==PAUSE_MENU)
+    if(state!=RUNNING)
         return;
 
     for(unsigned int i = 0; i<o.size(); i++)
@@ -276,7 +276,7 @@ void Controller::update()
         addForces(o[i]);
         changePosition(o[i]);
         constrainEdges(o[i]);
-        //checkCollision();
+        checkCollision();
         //std::cout<<"\n...";
     }
 }
@@ -332,14 +332,15 @@ int Controller::checkCollision()
         for(unsigned int j=0; j<o.size(); j++) {
             if(i!=j){
                 //Policz dlugosc wektora pomiedzy srodkami kol
-                float distance = sqrt(pow((o[i]->getPosition()[0] - o[j]->getPosition()[0]), 2) + pow((o[i]->getPosition()[1] - o[j]->getPosition()[1]), 2));
+                float distance = sqrt(pow((o[i]->getPosition()[0] - o[j]->getPosition()[0]), 2) +
+                        pow((o[i]->getPosition()[1] - o[j]->getPosition()[1]), 2));
                  //porownaj z dlugoscia promieni
                 float radiusTotal = o[i]->info()[0] + o[j]->info()[0];
 
                  //jesli dlugosc wektora mniejsza/rowna sumie dlugosci promieni oblicz kolizje
                  if (distance <= radiusTotal) {
                    //  resolveCollision(o[i],o[j]);
-                    std::cout << "COLLISION!!!\n";
+                    std::cout<<i<<" with "<<j<< "   COLLISION!!!\n";
                 }
             }
         }
@@ -367,7 +368,7 @@ void Controller::control(sf::RenderWindow &win)
                 break;
             case sf::Event::KeyPressed:
                 restart(event);
-                stopStart(event);
+                pausePlay(event);
                 menu();
                 break;
             default:

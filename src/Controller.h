@@ -23,14 +23,14 @@
 enum LEVEL{
     MENU,
     GRAVITYFIELD,
-    PLANETARYSYSTEM,
-    OPTIONS_MENU
+    PLANETARYSYSTEM
 };
 enum STATE{
     RUNNING,
     PAUSE_POINTER,
     PAUSE_,
-    PAUSE_MENU
+    PAUSE_MENU,
+    PAUSE_OPTIONS
 };
 enum HIGHLIGHT{
     GRAVITATIONAL,
@@ -70,7 +70,7 @@ class Controller {
 
     void restart(sf::Event &);
 
-    void stopStart(sf::Event &);
+    void pausePlay(sf::Event &);
 
     void menu();
 
