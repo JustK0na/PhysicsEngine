@@ -339,15 +339,88 @@ int Controller::checkCollision()
 
                  //jesli dlugosc wektora mniejsza/rowna sumie dlugosci promieni oblicz kolizje
                  if (distance <= radiusTotal) {
-                   //  resolveCollision(o[i],o[j]);
-                    std::cout<<i<<" with "<<j<< "   COLLISION!!!\n";
+                     resolveCollision(o[i],o[j]);
+                     std::cout<<i<<" with "<<j<< "   COLLISION!!!\n";
                 }
             }
         }
     }
     return 0;
 }
+void Controller::resolveCollision(Object *obj1, Object *obj2) {
 
+/* ################## Resolving for obj 1 #############*/
+    std::vector<float> circlesCenter; //Vector that connects centres of objects(circles)
+    float Cx1, Cy1;
+    Cx1=(obj1->getPosition()[0]-obj2->getPosition()[0]);
+    Cy1=(obj1->getPosition()[1]-obj2->getPosition()[1]);
+    circlesCenter.push_back(Cx1);
+    circlesCenter.push_back(Cy1);
+    std::cout<<"\nCircle centre: "<<obj1->getPosition()[0]<<", "<<obj1->getPosition()[1];
+    std::cout<<"\tVector: "<<circlesCenter.at(0)<<", "<<circlesCenter.at(1);
+
+    std::vector<float> perpendicular; //Vector that is perpendicular to vector of circles centres, and have beginning in one's centre
+    float Px2,Py2;
+    if(circlesCenter.at(1)!=0) {
+        Px2 = 1;
+        Py2 = -(circlesCenter.at(0)/ circlesCenter.at(1));
+        perpendicular.push_back(Px2);
+        perpendicular.push_back(Py2);
+    }
+    else{
+        Px2=-(circlesCenter.at(1)/circlesCenter.at(0));
+        Py2=1;
+        perpendicular.push_back(Px2);
+        perpendicular.push_back(Py2);
+    }
+    std::cout<<"\nVector perpandicular: "<<perpendicular.at(0)<<", "<<perpendicular.at(1);
+
+    std::vector<float> projection; //linear projection of velocity onto perpendicular vector
+    float Px3, Py3;
+    float Vx1, Vy1;
+    Vx1=obj1->getPosition()[0]-obj1->getOldPosition()[0];
+    Vy1=obj1->getPosition()[1]-obj1->getOldPosition()[1];
+
+
+
+    //Momentum equation, scaling vectors accordingly
+    float Vx2, Vy2; //scalar
+    Vx2 = obj2->getPosition()[0]-obj2->getOldPosition()[0];
+    Vy2 = obj2->getPosition()[1]-obj2->getOldPosition()[1];
+    float VxMomentum, VyMomentum; //scalar
+    VxMomentum = (Vx1*(obj1->getMass()-obj2->getMass())+2*obj2->getMass()*Vx2)/(obj1->getMass()+obj2->getMass());
+    VyMomentum = (Vy1*(obj1->getMass()-obj2->getMass())+2*obj2->getMass()*Vy2)/(obj1->getMass()+obj2->getMass());
+
+    Vx1 = VxMomentum;
+    Vy1 = VyMomentum;  //NALEZY ROZWIĄZAĆ zderzenie obu obiektów na raz
+
+
+    std::cout<<"\nVelocity: "<<Vx1<<", "<<Vy1;
+
+    Px3=((Vx1*perpendicular.at(0)+Vy1*perpendicular.at(1))/
+            (perpendicular.at(0)*perpendicular.at(0)+perpendicular.at(1)*perpendicular.at(1)))*perpendicular.at(0);
+    Py3=((Vx1*perpendicular.at(0)+Vy1*perpendicular.at(1))/
+         (perpendicular.at(0)*perpendicular.at(0)+perpendicular.at(1)*perpendicular.at(1)))*perpendicular.at(1);
+
+    projection.push_back(Px3+obj1->getPosition()[0]);
+    projection.push_back(Py3+obj1->getPosition()[1]);
+
+    std::cout<<"\nVector projection: "<<projection.at(0)<<", "<<projection.at(1);
+    std::vector<float> newVelocity;
+    float FinalVxPoint, FinalVyPoint; //vector
+
+    FinalVxPoint = 2*(projection.at(0))-(obj1->getPosition()[0]+Vx1);
+    FinalVyPoint = 2*(projection.at(1))-(obj1->getPosition()[1]+Vy1);
+
+    newVelocity.push_back(FinalVxPoint);
+    newVelocity.push_back(FinalVyPoint);
+
+    std::cout<<"\nOld position: "<<obj1->getPosition()[0]<<", "<<obj1->getPosition()[1];
+    std::cout<<"\tPosition:  "<<FinalVxPoint<<", "<<FinalVyPoint;
+    obj1->updateOldPosition(obj1->getPosition());
+    obj1->updatePosition(newVelocity);
+    
+}
 void Controller::control(sf::RenderWindow &win)
 {
     sf::Event event;
