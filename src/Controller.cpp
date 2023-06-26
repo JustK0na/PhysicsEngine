@@ -128,6 +128,33 @@ void Controller::changeLevel(sf::Event &event, sf::Window &win)
     {
         if(sf::Keyboard::isKeyPressed((sf::Keyboard::Escape)))
             state=PAUSE_MENU;
+        if (sf::Mouse::getPosition(win).x >= 341.4 && sf::Mouse::getPosition(win).x <= 1115.4) {
+            if (sf::Mouse::getPosition(win).y >= 207 && sf::Mouse::getPosition(win).y <= 233) {
+                highlight = GRAVITATIONALCONSTANT;
+                 std::cout << "\nGravitational constant: " << highlight;
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                    std::cout<<"pressed";
+                return;
+            }
+        }
+        if (sf::Mouse::getPosition(win).x >= 342.4 && sf::Mouse::getPosition(win).x <= 887.4) {
+            if (sf::Mouse::getPosition(win).y >= 507 && sf::Mouse::getPosition(win).y <= 533) {
+                highlight = PLANETMASS;
+                 std::cout << "\nPlanet MAss: " << highlight;
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                    win.close();
+                return;
+            }
+        }
+        if (sf::Mouse::getPosition(win).x >= 342.4 && sf::Mouse::getPosition(win).x <= 906.4) {
+            if (sf::Mouse::getPosition(win).y >= 357 && sf::Mouse::getPosition(win).y <= 383) {
+                highlight = PLANETRADIUS;
+                 std::cout << "\nPlanetRadiiuss: " << highlight;
+                if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+                    win.close();
+                return;
+            }
+        }
     }
         highlight = NONE;
         //std::cout << "\nNONE: " << highlight;

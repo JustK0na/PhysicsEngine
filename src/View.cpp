@@ -172,22 +172,37 @@ void View::options(sf::RenderWindow &win) const
     rect.setFillColor(sf::Color(123,90,200,150));
 
     sf::Text gravityConst("Gravitational constant: "+std::to_string(c.getGravitationalConstant()* pow(10,11))+"*10^(-11)" , Oxproto);
-    gravityConst.setFillColor(sf::Color(186, 65, 9));
+    if(c.getHighlight()==GRAVITATIONALCONSTANT)
+        gravityConst.setFillColor(sf::Color::Red);
+    else
+        gravityConst.setFillColor(sf::Color(186, 65, 9));
     gravityConst.setCharacterSize(30);
     gravityConst.setPosition((rect.getGlobalBounds().left+rect.getGlobalBounds().width)/2-gravityConst.getGlobalBounds().width/2.5,200);
     win.draw(gravityConst);
+    //std::cout<<"\ngravity const: X,Y, width, height "<<gravityConst.getGlobalBounds().left<<", "<<gravityConst.getGlobalBounds().top<<", "<<gravityConst.getGlobalBounds().width
+    //    <<", "<<gravityConst.getGlobalBounds().height;
 
     sf::Text planetRadius("Planet Radius: "+std::to_string(c.getPlanetRadius()* pow(10,-6))+"*10^(6)" , Oxproto);
-    planetRadius.setFillColor(sf::Color(186, 65, 9));
+    if(c.getHighlight()==PLANETRADIUS)
+        planetRadius.setFillColor(sf::Color::Red);
+    else
+        planetRadius.setFillColor(sf::Color(186, 65, 9));
     planetRadius.setCharacterSize(30);
     planetRadius.setPosition((rect.getGlobalBounds().left+rect.getGlobalBounds().width)/2-gravityConst.getGlobalBounds().width/2.5,350);
     win.draw(planetRadius);
+    //std::cout<<"\nplanet radius: X,Y, width, height "<<planetRadius.getGlobalBounds().left<<", "<<planetRadius.getGlobalBounds().top<<", "<<planetRadius.getGlobalBounds().width
+    //         <<", "<<planetRadius.getGlobalBounds().height;
 
     sf::Text planetMass("Planet Mass: "+std::to_string(c.getPlanetMass()* pow(10,-24))+"*10^(24)" , Oxproto);
-    planetMass.setFillColor(sf::Color(186, 65, 9));
+    if(c.getHighlight()==PLANETMASS)
+        planetMass.setFillColor(sf::Color::Red);
+    else
+        planetMass.setFillColor(sf::Color(186, 65, 9));
     planetMass.setCharacterSize(30);
     planetMass.setPosition((rect.getGlobalBounds().left+rect.getGlobalBounds().width)/2-gravityConst.getGlobalBounds().width/2.5,500);
     win.draw(planetMass);
+    //std::cout<<"\nplanet mass: X,Y, width, height "<<planetMass.getGlobalBounds().left<<", "<<planetMass.getGlobalBounds().top<<", "<<planetMass.getGlobalBounds().width
+    //         <<", "<<planetMass.getGlobalBounds().height;
 
 
     win.draw(rect);
