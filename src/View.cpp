@@ -165,8 +165,30 @@ void View::options(sf::RenderWindow &win) const
 {
     if(c.getState()!=PAUSE_OPTIONS)
         return;
+
+
     sf::RectangleShape rect(sf::Vector2f(1000, 700));
     rect.setPosition(SCREENWIDTH/2-(rect.getGlobalBounds().width/2), SCREENHEIGHT/2-(rect.getGlobalBounds().height/2));
+    rect.setFillColor(sf::Color(123,90,200,150));
+
+    sf::Text gravityConst("Gravitational constant: "+std::to_string(c.getGravitationalConstant()* pow(10,11))+"*10^(-11)" , Oxproto);
+    gravityConst.setFillColor(sf::Color(186, 65, 9));
+    gravityConst.setCharacterSize(30);
+    gravityConst.setPosition((rect.getGlobalBounds().left+rect.getGlobalBounds().width)/2-gravityConst.getGlobalBounds().width/2.5,200);
+    win.draw(gravityConst);
+
+    sf::Text planetRadius("Planet Radius: "+std::to_string(c.getPlanetRadius()* pow(10,-6))+"*10^(6)" , Oxproto);
+    planetRadius.setFillColor(sf::Color(186, 65, 9));
+    planetRadius.setCharacterSize(30);
+    planetRadius.setPosition((rect.getGlobalBounds().left+rect.getGlobalBounds().width)/2-gravityConst.getGlobalBounds().width/2.5,350);
+    win.draw(planetRadius);
+
+    sf::Text planetMass("Planet Mass: "+std::to_string(c.getPlanetMass()* pow(10,-24))+"*10^(24)" , Oxproto);
+    planetMass.setFillColor(sf::Color(186, 65, 9));
+    planetMass.setCharacterSize(30);
+    planetMass.setPosition((rect.getGlobalBounds().left+rect.getGlobalBounds().width)/2-gravityConst.getGlobalBounds().width/2.5,500);
+    win.draw(planetMass);
+
 
     win.draw(rect);
 }

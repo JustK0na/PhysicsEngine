@@ -11,6 +11,9 @@ Controller::Controller(std::vector<Object *>  &objects):o(objects)
     level = MENU;
     state = RUNNING;
     globalTime = 0;
+    G = (6.6743 * pow(10, -11));
+    M = 5.97219 * pow(10, 24);
+    R = 6.3781 * pow(10, 6);
 }
 LEVEL Controller::getLevel() const
 {
@@ -23,6 +26,27 @@ HIGHLIGHT Controller::getHighlight() const
 STATE Controller::getState() const
 {
     return state;
+}
+float Controller::getGravitationalConstant() const {
+    return G;
+}
+float Controller::getPlanetRadius() const
+{
+    return R;
+}
+float Controller::getPlanetMass() const{
+    return M;
+}
+
+void Controller::changeGravitationalConstant (float gravitationalConstant){
+    G=gravitationalConstant;
+}
+void Controller::changePlanetRadius(float radius){
+    R=radius;
+}
+void Controller::changePlanetMass(float mass)
+{
+    M = mass;
 }
 void Controller::changeLevel(sf::Event &event, sf::Window &win)
 {
@@ -163,7 +187,7 @@ void Controller::addObject(sf::Event &event, sf::Window &win)
 {
     if(level==MENU)
         return;
-    if(state==PAUSE_MENU||state==PAUSE_)
+    if(state==PAUSE_MENU||state==PAUSE_||state==PAUSE_OPTIONS)
         return;
 
     if(event.mouseButton.button==sf::Mouse::Left)
@@ -212,11 +236,6 @@ void Controller::addForces(Object *o)
     ForceY.push_back(0);
 
     float gravity;
-    float G = (6.6743 * pow(10, -11));
-    float M = 5.97219 * pow(10, 24);
-    float R = 6.3781 * pow(10, 6);
-
-
     gravity = G * M * o->getMass()/pow(R,2);
     ForceY.at(1)=+gravity;
     //std::cout<<"Gravity: "<<gravity<<std::endl;
@@ -340,7 +359,7 @@ int Controller::checkCollision()
                  //jesli dlugosc wektora mniejsza/rowna sumie dlugosci promieni oblicz kolizje
                  if (distance <= radiusTotal) {
                      resolveCollision(o[i],o[j]);
-                     std::cout<<i<<" with "<<j<< "   COLLISION!!!\n";
+                     //std::cout<<i<<" with "<<j<< "   COLLISION!!!\n";
                 }
             }
         }
@@ -356,8 +375,8 @@ void Controller::resolveCollision(Object *obj1, Object *obj2) {
     Cy1=(obj1->getPosition()[1]-obj2->getPosition()[1]);
     circlesCenter.push_back(Cx1);
     circlesCenter.push_back(Cy1);
-    std::cout<<"\nCircle centre: "<<obj1->getPosition()[0]<<", "<<obj1->getPosition()[1];
-    std::cout<<"\tVector: "<<circlesCenter.at(0)<<", "<<circlesCenter.at(1);
+    //std::cout<<"\nCircle centre: "<<obj1->getPosition()[0]<<", "<<obj1->getPosition()[1];
+    //std::cout<<"\tVector: "<<circlesCenter.at(0)<<", "<<circlesCenter.at(1);
 
     std::vector<float> perpendicular; //Vector that is perpendicular to vector of circles centres, and have beginning in one's centre
     float Px2,Py2;
@@ -373,7 +392,7 @@ void Controller::resolveCollision(Object *obj1, Object *obj2) {
         perpendicular.push_back(Px2);
         perpendicular.push_back(Py2);
     }
-    std::cout<<"\nVector perpandicular: "<<perpendicular.at(0)<<", "<<perpendicular.at(1);
+   // std::cout<<"\nVector perpandicular: "<<perpendicular.at(0)<<", "<<perpendicular.at(1);
 
     std::vector<float> projection; //linear projection of velocity onto perpendicular vector
     float Px3, Py3;
@@ -390,12 +409,12 @@ void Controller::resolveCollision(Object *obj1, Object *obj2) {
     float VxMomentum, VyMomentum; //scalar
     VxMomentum = (Vx1*(obj1->getMass()-obj2->getMass())+2*obj2->getMass()*Vx2)/(obj1->getMass()+obj2->getMass());
     VyMomentum = (Vy1*(obj1->getMass()-obj2->getMass())+2*obj2->getMass()*Vy2)/(obj1->getMass()+obj2->getMass());
-
+    
     Vx1 = VxMomentum;
     Vy1 = VyMomentum;  //NALEZY ROZWIĄZAĆ zderzenie obu obiektów na raz
 
 
-    std::cout<<"\nVelocity: "<<Vx1<<", "<<Vy1;
+    //std::cout<<"\nVelocity: "<<Vx1<<", "<<Vy1;
 
     Px3=((Vx1*perpendicular.at(0)+Vy1*perpendicular.at(1))/
             (perpendicular.at(0)*perpendicular.at(0)+perpendicular.at(1)*perpendicular.at(1)))*perpendicular.at(0);
@@ -405,7 +424,7 @@ void Controller::resolveCollision(Object *obj1, Object *obj2) {
     projection.push_back(Px3+obj1->getPosition()[0]);
     projection.push_back(Py3+obj1->getPosition()[1]);
 
-    std::cout<<"\nVector projection: "<<projection.at(0)<<", "<<projection.at(1);
+    //std::cout<<"\nVector projection: "<<projection.at(0)<<", "<<projection.at(1);
     std::vector<float> newVelocity;
     float FinalVxPoint, FinalVyPoint; //vector
 
@@ -415,8 +434,8 @@ void Controller::resolveCollision(Object *obj1, Object *obj2) {
     newVelocity.push_back(FinalVxPoint);
     newVelocity.push_back(FinalVyPoint);
 
-    std::cout<<"\nOld position: "<<obj1->getPosition()[0]<<", "<<obj1->getPosition()[1];
-    std::cout<<"\tPosition:  "<<FinalVxPoint<<", "<<FinalVyPoint;
+    //std::cout<<"\nOld position: "<<obj1->getPosition()[0]<<", "<<obj1->getPosition()[1];
+    //std::cout<<"\tPosition:  "<<FinalVxPoint<<", "<<FinalVyPoint;
     obj1->updateOldPosition(obj1->getPosition());
     obj1->updatePosition(newVelocity);
     

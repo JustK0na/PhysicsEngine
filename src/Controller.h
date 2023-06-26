@@ -50,6 +50,10 @@ class Controller {
     STATE state;
     int globalTime;
 
+    float G;
+    float M;
+    float R;
+
     void addObject(sf::Event &, sf::Window &);
     void setStartingVelocity(sf::Event &);
 
@@ -81,12 +85,18 @@ public:
     void control(sf::RenderWindow &);
 
 
-
-
     LEVEL getLevel() const;
     HIGHLIGHT getHighlight() const;
     STATE getState() const;
     std::vector<float> getMousePosition() const;
+
+    float getGravitationalConstant() const;
+    float getPlanetRadius() const;
+    float getPlanetMass() const;
+
+    void changeGravitationalConstant (float gravitationalConstant);
+    void changePlanetRadius (float radius);
+    void changePlanetMass(float mass);
 };
 
 

@@ -27,9 +27,6 @@ class View {
     void menuPause(sf::RenderWindow &) const;
     void options(sf::RenderWindow &) const;
     void drawPause(sf::RenderWindow &) const;
-    //text string, font, text color, text size, text outline color,
-    //outline thickness, text position x, text position y
-    //sf::Text createText(char &, sf::Font, sf::Color, int, sf::Color, int, float, float)const;
 
 public:
     View(std::vector<Object*>&, Controller &);
