@@ -43,7 +43,6 @@ enum HIGHLIGHT{
     GRAVITATIONALCONSTANT,
     PLANETRADIUS,
     PLANETMASS,
-
     NONE
 };
 class Controller {
@@ -83,6 +82,7 @@ class Controller {
 
     void update();
 
+    void inspectObject(sf::RenderWindow &);
 public:
     Controller(std::vector<Object* > &);
     void control(sf::RenderWindow &);

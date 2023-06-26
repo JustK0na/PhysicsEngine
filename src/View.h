@@ -27,6 +27,7 @@ class View {
     void menuPause(sf::RenderWindow &) const;
     void options(sf::RenderWindow &) const;
     void drawPause(sf::RenderWindow &) const;
+    void inspectObjects(sf::RenderWindow &) const;
 
 public:
     View(std::vector<Object*>&, Controller &);

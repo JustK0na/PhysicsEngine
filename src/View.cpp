@@ -229,6 +229,55 @@ void View::drawObjects(sf::RenderWindow & win) const
 
     }
 }
+void View::inspectObjects(sf::RenderWindow & win) const
+{
+    if(c.getState()!=PAUSE_)
+        return;
+    for (unsigned int i = 0; i < o.size(); i++) {
+        if (sf::Mouse::getPosition(win).x < o.at(i)->getPosition()[0] + o.at(i)->info()[0] &&
+            sf::Mouse::getPosition(win).x > o.at(i)->getPosition()[0] - o.at(i)->info()[0])
+            if (sf::Mouse::getPosition(win).y < o.at(i)->getPosition()[1] + o.at(i)->info()[0] &&
+                sf::Mouse::getPosition(win).y > o.at(i)->getPosition()[1] - o.at(i)->info()[0])
+            {
+                sf::RectangleShape rect(sf::Vector2f(350,200));
+                rect.setPosition(sf::Vector2f (o.at(i)->getPosition()[0],o.at(i)->getPosition()[1]));
+                if(o.at(i)->getPosition()[0]>SCREENWIDTH-350)
+                    rect.setPosition(sf::Vector2f (o.at(i)->getPosition()[0]-350,o.at(i)->getPosition()[1]));
+                if(o.at(i)->getPosition()[1]>SCREENHEIGHT-200)
+                    rect.setPosition(sf::Vector2f (o.at(i)->getPosition()[0],o.at(i)->getPosition()[1]-200));
+                if(o.at(i)->getPosition()[1]>SCREENHEIGHT-200&&o.at(i)->getPosition()[0]>SCREENWIDTH-350)
+                    rect.setPosition(sf::Vector2f (o.at(i)->getPosition()[0]-350,o.at(i)->getPosition()[1]-200));
+                win.draw(rect);
+
+
+                float velocityx = o.at(i)->getPosition()[0]-o.at(i)->getOldPosition()[0];
+                float velocityy = o.at(i)->getPosition()[1]-o.at(i)->getOldPosition()[1];
+                sf::Text velocity("velocity x: "+std::to_string(velocityx)+", y: "+std::to_string(velocityy),Oxproto);
+                velocity.setFillColor(sf::Color::Black);
+                velocity.setPosition(sf::Vector2f(rect.getGlobalBounds().left+5,rect.getGlobalBounds().top+10));
+                velocity.setCharacterSize(14);
+                win.draw(velocity);
+
+                float forcesx = o.at(i)->getForces()[0];
+                float forcesy = o.at(i)->getForces()[1];
+
+                sf::Text forces("force x: "+std::to_string(forcesx)+", y: "+std::to_string(forcesy),Oxproto);
+                forces.setFillColor(sf::Color::Black);
+                forces.setPosition(sf::Vector2f(rect.getGlobalBounds().left+5,rect.getGlobalBounds().top+20+velocity.getGlobalBounds().height));
+                forces.setCharacterSize(14);
+                win.draw(forces);
+
+                float mass = o.at(i)->getMass();
+                float radius = o.at(i)->info()[0];
+
+                sf::Text massAndRadius("mass: "+std::to_string(mass)+",\tradius: "+std::to_string(radius),Oxproto);
+                massAndRadius.setFillColor(sf::Color::Black);
+                massAndRadius.setPosition(sf::Vector2f(rect.getGlobalBounds().left+5,rect.getGlobalBounds().top+30+velocity.getGlobalBounds().height+forces.getGlobalBounds().height));
+                massAndRadius.setCharacterSize(14);
+                win.draw(massAndRadius);
+            }
+    }
+}
 void View::drawPointer(sf::RenderWindow &win) const
 {
     if(c.getState()!=PAUSE_POINTER)
@@ -299,6 +348,7 @@ void View::present(sf::RenderWindow &win) const
     win.clear(sf::Color(0,0,0));
 
     drawObjects(win);
+    inspectObjects(win);
     drawPointer(win);
     Menu(win);
     options(win);

@@ -131,27 +131,47 @@ void Controller::changeLevel(sf::Event &event, sf::Window &win)
         if (sf::Mouse::getPosition(win).x >= 341.4 && sf::Mouse::getPosition(win).x <= 1115.4) {
             if (sf::Mouse::getPosition(win).y >= 207 && sf::Mouse::getPosition(win).y <= 233) {
                 highlight = GRAVITATIONALCONSTANT;
-                 std::cout << "\nGravitational constant: " << highlight;
+                 //std::cout << "\nGravitational constant: " << highlight;
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-                    std::cout<<"pressed";
+                {
+                    float a;
+                    std::cout<<"\nWrite new gravitational constant: ";
+                    std::cin>>a;
+                    a = a * pow(10, -11);
+                    changeGravitationalConstant(a);
+                }
+
                 return;
             }
         }
         if (sf::Mouse::getPosition(win).x >= 342.4 && sf::Mouse::getPosition(win).x <= 887.4) {
             if (sf::Mouse::getPosition(win).y >= 507 && sf::Mouse::getPosition(win).y <= 533) {
                 highlight = PLANETMASS;
-                 std::cout << "\nPlanet MAss: " << highlight;
+                 //std::cout << "\nPlanet MAss: " << highlight;
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-                    win.close();
+                {
+                    float a;
+                    std::cout<<"\nWrite new Planet's mass: ";
+                    std::cin>>a;
+                    a=a * pow(10, 24);
+                    changePlanetMass(a);
+                }
+
                 return;
             }
         }
         if (sf::Mouse::getPosition(win).x >= 342.4 && sf::Mouse::getPosition(win).x <= 906.4) {
             if (sf::Mouse::getPosition(win).y >= 357 && sf::Mouse::getPosition(win).y <= 383) {
                 highlight = PLANETRADIUS;
-                 std::cout << "\nPlanetRadiiuss: " << highlight;
+                 //std::cout << "\nPlanetRadiiuss: " << highlight;
                 if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-                    win.close();
+                {
+                    float a;
+                    std::cout<<"\nWrite new Planet's radius: ";
+                    std::cin>>a;
+                    a = a * pow(10, 6);
+                    changePlanetRadius(a);
+                }
                 return;
             }
         }
@@ -177,6 +197,9 @@ void Controller::restart(sf::Event & event)
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
     {
         o.clear();
+        changeGravitationalConstant((6.6743 * pow(10, -11)));
+        changePlanetMass(5.97219 * pow(10, 24));
+        changePlanetRadius(6.3781 * pow(10, 6));
     }
 }
 void Controller::pausePlay(sf::Event &event)
@@ -222,7 +245,8 @@ void Controller::addObject(sf::Event &event, sf::Window &win)
         int x = event.mouseButton.x;
         int y = event.mouseButton.y;
 
-        o.push_back(new Circle); //tego tutaj nie może być !!!e
+        
+        o.push_back(new Circle);
 
         if(o.back()->spawn(x,y,x,y,globalTime)==0)
         {
@@ -467,6 +491,20 @@ void Controller::resolveCollision(Object *obj1, Object *obj2) {
     obj1->updatePosition(newVelocity);
     
 }
+
+void Controller::inspectObject(sf::RenderWindow &win)
+{
+    if(state!=PAUSE_)
+        return;
+   /* for(int i=0; i<o.size(); i++)
+    {
+        if(sf::Mouse::getPosition(win).x<o.at(i)->getPosition()[0]+o.at(i)->info()[0]&&sf::Mouse::getPosition(win).x>o.at(i)->getPosition()[0]-o.at(i)->info()[0])
+        if(sf::Mouse::getPosition(win).y<o.at(i)->getPosition()[1]+o.at(i)->info()[0]&&sf::Mouse::getPosition(win).y>o.at(i)->getPosition()[1]-o.at(i)->info()[0])
+        {
+               highlight = NONE;
+        }
+    }*/
+}
 void Controller::control(sf::RenderWindow &win)
 {
     sf::Event event;
@@ -494,6 +532,7 @@ void Controller::control(sf::RenderWindow &win)
                 break;
         }
     }
+    inspectObject(win);
     changeLevel(event,win);
     update();
 }
