@@ -245,7 +245,7 @@ void Controller::addObject(sf::Event &event, sf::Window &win)
         int x = event.mouseButton.x;
         int y = event.mouseButton.y;
 
-        
+
         o.push_back(new Circle);
 
         if(o.back()->spawn(x,y,x,y,globalTime)==0)
@@ -491,20 +491,6 @@ void Controller::resolveCollision(Object *obj1, Object *obj2) {
     obj1->updatePosition(newVelocity);
     
 }
-
-void Controller::inspectObject(sf::RenderWindow &win)
-{
-    if(state!=PAUSE_)
-        return;
-   /* for(int i=0; i<o.size(); i++)
-    {
-        if(sf::Mouse::getPosition(win).x<o.at(i)->getPosition()[0]+o.at(i)->info()[0]&&sf::Mouse::getPosition(win).x>o.at(i)->getPosition()[0]-o.at(i)->info()[0])
-        if(sf::Mouse::getPosition(win).y<o.at(i)->getPosition()[1]+o.at(i)->info()[0]&&sf::Mouse::getPosition(win).y>o.at(i)->getPosition()[1]-o.at(i)->info()[0])
-        {
-               highlight = NONE;
-        }
-    }*/
-}
 void Controller::control(sf::RenderWindow &win)
 {
     sf::Event event;
@@ -532,7 +518,6 @@ void Controller::control(sf::RenderWindow &win)
                 break;
         }
     }
-    inspectObject(win);
     changeLevel(event,win);
     update();
 }

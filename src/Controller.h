@@ -81,8 +81,6 @@ class Controller {
     void menu();
 
     void update();
-
-    void inspectObject(sf::RenderWindow &);
 public:
     Controller(std::vector<Object* > &);
     void control(sf::RenderWindow &);

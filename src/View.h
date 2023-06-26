@@ -22,7 +22,7 @@ class View {
 
 
     void drawObjects(sf::RenderWindow&) const;
-    void drawPointer(sf::RenderWindow& ) const; //tmp name
+    void drawPointer(sf::RenderWindow& ) const;
     void Menu(sf::RenderWindow &) const;
     void menuPause(sf::RenderWindow &) const;
     void options(sf::RenderWindow &) const;
