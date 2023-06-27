@@ -419,7 +419,7 @@ int Controller::checkCollision()
 }
 void Controller::resolveCollision(Object *obj1, Object *obj2) {
 
-/* ################## Resolving for obj 1 #############*/
+/* ################## solving for obj 1 #############*/
     std::vector<float> circlesCenter; //Vector that connects centres of objects(circles)
     float Cx1, Cy1;
     Cx1=(obj1->getPosition()[0]-obj2->getPosition()[0]);
@@ -462,7 +462,7 @@ void Controller::resolveCollision(Object *obj1, Object *obj2) {
     VyMomentum = (Vy1*(obj1->getMass()-obj2->getMass())+2*obj2->getMass()*Vy2)/(obj1->getMass()+obj2->getMass());
     
     Vx1 = VxMomentum;
-    Vy1 = VyMomentum;  //NALEZY ROZWIĄZAĆ zderzenie obu obiektów na raz
+    Vy1 = VyMomentum;
 
 
     //std::cout<<"\nVelocity: "<<Vx1<<", "<<Vy1;
@@ -479,7 +479,7 @@ void Controller::resolveCollision(Object *obj1, Object *obj2) {
     std::vector<float> newVelocity;
     float FinalVxPoint, FinalVyPoint; //vector
 
-    FinalVxPoint = 2*(projection.at(0))-(obj1->getPosition()[0]+Vx1);
+        FinalVxPoint = 2*(projection.at(0))-(obj1->getPosition()[0]+Vx1);
     FinalVyPoint = 2*(projection.at(1))-(obj1->getPosition()[1]+Vy1);
 
     newVelocity.push_back(FinalVxPoint);

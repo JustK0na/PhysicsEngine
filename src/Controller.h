@@ -81,6 +81,10 @@ class Controller {
     void menu();
 
     void update();
+
+    void changeGravitationalConstant (float gravitationalConstant);
+    void changePlanetRadius (float radius);
+    void changePlanetMass(float mass);
 public:
     Controller(std::vector<Object* > &);
     void control(sf::RenderWindow &);
@@ -95,9 +99,7 @@ public:
     float getPlanetRadius() const;
     float getPlanetMass() const;
 
-    void changeGravitationalConstant (float gravitationalConstant);
-    void changePlanetRadius (float radius);
-    void changePlanetMass(float mass);
+
 };
 
 
